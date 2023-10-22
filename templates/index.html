@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fraud Transaction Detection</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: black;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #0f0303;
+            text-align: center;
+            font-weight: bolder;
+            text-decoration-line: underline;
+            background-color: rgb(68, 204, 216);
+            padding: 3px;
+        }
+
+        form {
+            max-width: 1100px;
+            margin: 0 auto;
+            background-color: #bdffff;
+            padding: 20px;
+            border-radius: 10px;
+            border-color: cyan;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-gap: 10px;
+            position: sticky;
+        }
+
+        label {
+            font-style: normal;
+            display: block;
+            margin-bottom: 20px;
+            color: #131212;
+            font-size: 20px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            font-size: 22px;
+            border-radius: 4px;
+            border: 2px solid blue;
+            text-align: center;
+        }
+
+        input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            font-size: 20px;
+            border-radius: 4px;
+            background-color: #248aff;
+            color: #fff;
+            border: #008080;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        h3 {
+            color: #00cbe6;
+            font-size: 25px;
+            text-align: center;
+        }
+
+        p#predictions {
+            color: #14a5de;
+            font-size: 25px;
+            text-align: center;
+        }
+
+        footer {
+            text-align: center;
+            padding: 3px;
+            background-color: rgb(65, 159, 182);
+            color: rgb(19, 4, 4);
+            font-size: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <!--#X = data_df[['MerchantName', 'TransactionResult', 'CardIssuer', 'CardCVV', 'TransactionCode', 'TransactionStatus',
+#  'CardLimit', 'TransactionDate', 'TransactionFrequency', 'CardVerified']].values
+ -->
+    <h1><strong>Fraud Transaction Detection</strong></h1>
+    <form id="prediction-form">
+        <label for="MerchantName">MerchantNo :</label>
+        <input type="text" id="MerchantName" name="MerchantName"><br><br>
+
+        <label for="TransactionResult">TransactionResult:</label>
+        <input type="text" id="TransactionResult" name="TransactionResult"><br><br>
+
+        <label for="CardIssuer">CardIssuer:</label>
+        <input type="text" id="CardIssuer" name="CardIssuer"><br><br>
+
+        <label for="CardCVV">CardCVV:</label>
+        <input type="text" id="CardCVV" name="CardCVV"><br><br>
+
+        <label for="TransactionCode">TransactionCode:</label>
+        <input type="text" id="TransactionCode" name="TransactionCode"><br><br>
+
+        <label for="TransactionStatus">TransactionStatus:</label>
+        <input type="text" id="TransactionStatus" name="TransactionStatus"><br><br>
+
+        <label for="CardLimit">CardLimit:</label>
+        <input type="text" id="CardLimit" name="CardLimit"><br><br>
+
+        <label for="TransactionDate">TransactionDate:</label>
+        <input type="text" id="TransactionDate" name="TransactionDate"><br><br>
+
+        <label for="TransactionFrequency">TransactionFrequency:</label>
+        <input type="text" id="TransactionFrequency" name="TransactionFrequency"><br><br>
+
+        <label for="CardVerified">CardVerified:</label>
+        <input type="text" id="CardVerified" name="CardVerified"><br><br>
+
+        <input type="submit" value="Predict">
+    </form>
+
+    <h3>Predictions:</h3>
+    <p id="predictions"></p>
+
+    <footer>
+        <p>Project by Team <h3 style="color: white;">S P A R K L E</h3></p>
+    </footer>
+
+    <script>
+        function handleFormSubmit(event) {
+            event.preventDefault();
+        
+            const MerchantName = document.getElementById('MerchantName').value;
+            const TransactionResult = document.getElementById('TransactionResult').value;
+            const CardIssuer = document.getElementById('CardIssuer').value;
+            const CardCVV = document.getElementById('CardCVV').value;
+            const TransactionCode = document.getElementById('TransactionCode').value;
+            const TransactionStatus = document.getElementById('TransactionStatus').value;
+            const CardLimit = document.getElementById('CardLimit').value;
+            const TransactionDate = document.getElementById('TransactionDate').value;
+            const TransactionFrequency = document.getElementById('TransactionFrequency').value;
+            const CardVerified = document.getElementById('CardVerified').value;
+        
+            const formData = {
+                MerchantName: MerchantName,
+                TransactionResult: TransactionResult,
+                CardIssuer: CardIssuer,
+                CardCVV: CardCVV,
+                TransactionCode: TransactionCode,
+                TransactionStatus: TransactionStatus,
+                CardLimit: CardLimit,
+                TransactionDate: TransactionDate,
+                TransactionFrequency: TransactionFrequency,
+                CardVerified: CardVerified
+            };
+        
+            fetch('/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                const predictionsElement = document.getElementById('predictions');
+                predictionsElement.innerHTML = "The credit card transaction is " + data.predictions;
+            });
+        }
+        
+        // Attach form submission event listener
+        const form = document.getElementById('prediction-form');
+        form.addEventListener('submit', handleFormSubmit);
+        
+    </script>
+</body>
+</html>
